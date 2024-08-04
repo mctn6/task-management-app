@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const CREATE_TASK = gql`
   mutation CreateTask($title: String!, $description: String, $dueDate: String) {
@@ -45,16 +45,16 @@ function TaskForm() {
   const [status, setStatus] = useState('Todo');
   const [dueDate, setDueDate] = useState('');
   const [error, setError] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const [createTask] = useMutation(CREATE_TASK, {
-    onCompleted: () => history.push('/'),
+    onCompleted: () => navigate('/'),
     onError: (error) => setError(error.message),
   });
 
   const [updateTask] = useMutation(UPDATE_TASK, {
-    onCompleted: () => history.push('/'),
+    onCompleted: () => navigate('/'),
     onError: (error) => setError(error.message),
   });
 
