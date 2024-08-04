@@ -39,6 +39,18 @@ const GET_TASK = gql`
   }
 `;
 
+const GET_TASKS = gql`
+  query GetTasks {
+    tasks {
+      id
+      title
+      description
+      status
+      dueDate
+    }
+  }
+`;
+
 function TaskForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -49,11 +61,13 @@ function TaskForm() {
   const { id } = useParams();
 
   const [createTask] = useMutation(CREATE_TASK, {
+    refetchQueries: [{ query: GET_TASKS }],
     onCompleted: () => navigate('/'),
     onError: (error) => setError(error.message),
   });
 
   const [updateTask] = useMutation(UPDATE_TASK, {
+    refetchQueries: [{ query: GET_TASKS }],
     onCompleted: () => navigate('/'),
     onError: (error) => setError(error.message),
   });
