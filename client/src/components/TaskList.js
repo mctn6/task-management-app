@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Table, Button, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { parseDateString } from '../utils';
 
 const GET_TASKS = gql`
   query GetTasks {
@@ -62,7 +63,7 @@ function TaskList() {
                   {task.status}
                 </Badge>
               </td>
-              <td>{new Date(task.dueDate).toLocaleDateString()}</td>
+              <td>{parseDateString(task.dueDate)}</td>
               <td>
                 <Link to={`/edit-task/${task.id}`} className="btn btn-sm btn-primary me-2">
                   Edit
