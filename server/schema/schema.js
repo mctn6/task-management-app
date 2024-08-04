@@ -14,7 +14,8 @@ const typeDefs = gql`
     description: String
     status: String!
     dueDate: String
-    user: User!
+    assignedTo: User
+    createdBy: User
   }
 
   type AuthPayload {
@@ -26,15 +27,17 @@ const typeDefs = gql`
     me: User
     tasks: [Task!]
     task(id: ID!): Task
+    users: [User!]
   }
 
   type Mutation {
     register(username: String!, email: String!, password: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
-    createTask(title: String!, description: String, dueDate: String): Task!
-    updateTask(id: ID!, title: String, description: String, status: String, dueDate: String): Task!
+    createTask(title: String!, description: String, dueDate: String, assignedToId: ID): Task!
+    updateTask(id: ID!, title: String, description: String, status: String, dueDate: String, assignedToId: ID): Task!
     deleteTask(id: ID!): Boolean!
   }
 `;
+
 
 module.exports = typeDefs;

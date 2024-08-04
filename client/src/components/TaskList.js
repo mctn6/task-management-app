@@ -1,8 +1,8 @@
-import React from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { Table, Button, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { parseDateString } from '../utils';
+import React from "react";
+import { useQuery, useMutation, gql } from "@apollo/client";
+import { Table, Button, Badge } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { parseDateString } from "../utils";
 
 const GET_TASKS = gql`
   query GetTasks {
@@ -12,6 +12,11 @@ const GET_TASKS = gql`
       description
       status
       dueDate
+      assignedTo {
+        id
+        username
+        email
+      }
     }
   }
 `;
@@ -32,50 +37,72 @@ function TaskList() {
   if (error) return <p>Error: {error.message}</p>;
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
+    if (window.confirm("Are you sure you want to delete this task?")) {
       deleteTask({ variables: { id } });
     }
   };
-
+ 
   return (
     <div>
       <h2 className="mb-4">Task List</h2>
       <Link to="/create-task" className="btn btn-primary mb-3">
         Create New Task
       </Link>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Due Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.title}</td>
-              <td>{task.description}</td>
-              <td>
-                <Badge bg={task.status === 'Done' ? 'success' : task.status === 'In Progress' ? 'warning' : 'secondary'}>
-                  {task.status}
-                </Badge>
-              </td>
-              <td>{parseDateString(task.dueDate)}</td>
-              <td>
-                <Link to={`/edit-task/${task.id}`} className="btn btn-sm btn-primary me-2">
-                  Edit
-                </Link>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(task.id)}>
-                  Delete
-                </Button>
-              </td>
+
+      {data.tasks.length === 0 ? (
+       <p>No Data</p>
+      ) : (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {data.tasks.map((task) => (
+              <tr key={task.id}>
+                <td>{task.title}</td>
+                <td>{task.description}</td>
+                <td>
+                  <Badge
+                    bg={
+                      task.status === "Done"
+                        ? "success"
+                        : task.status === "In Progress"
+                        ? "warning"
+                        : "secondary"
+                    }
+                  >
+                    {task.status}
+                  </Badge>
+                </td>
+                <td>{parseDateString(task.dueDate)}</td>
+                <td>{task.assignedTo ? task.assignedTo.username : 'Unassigned'}</td>
+                <td>
+                  <Link
+                    to={`/edit-task/${task.id}`}
+                    className="btn btn-sm btn-primary me-2"
+                  >
+                    Edit
+                  </Link>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(task.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </div>
   );
 }
