@@ -5,17 +5,35 @@ const jwt = require('jsonwebtoken');
 
 const resolvers = {
   Query: {
-    me: (_, __, { user }) => {
+    me: async (_, __, { user }) => {
       if (!user) throw new Error('Not authenticated');
-      return User.findById(user.id);
+      try {
+        const user = await User.findById(user.id);
+        return user;
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        throw new Error('Unable to fetch user');
+      }
     },
-    tasks: (_, __, { user }) => {
+    tasks: async (_, __, { user }) => {
       if (!user) throw new Error('Not authenticated');
-      return Task.find({ user: user.id });
+      try {
+        const tasks = await Task.find({ user: user.id });
+        return tasks;
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        throw new Error('Unable to fetch tasks');
+      }
     },
-    task: (_, { id }, { user }) => {
+    task: async (_, { id }, { user }) => {
       if (!user) throw new Error('Not authenticated');
-      return Task.findOne({ _id: id, user: user.id });
+      try {
+        const task = await Task.findOne({ _id: id, user: user.id });
+        return task;
+      } catch (error) {
+        console.error('Error fetching task:', error);
+        throw new Error('Unable to fetch task');
+      }
     },
   },
   Mutation: {
