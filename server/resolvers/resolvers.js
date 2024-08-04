@@ -19,7 +19,9 @@ const resolvers = {
     tasks: async (_, __, { user }) => {
       if (!user) throw new Error("Not authenticated");
       try {
-        const tasks = await Task.find();
+        const tasks = await Task.find({
+          $or: [{ createdBy: user.id }, { assignedTo: user.id }],
+        });
         return tasks;
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -29,7 +31,6 @@ const resolvers = {
     task: async (_, { id }, { user }) => {
       if (!user) throw new Error("Not authenticated");
       try {
-
         const task = await Task.findOne({ _id: id });
         return task;
       } catch (error) {
