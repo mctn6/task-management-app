@@ -109,7 +109,7 @@ const resolvers = {
     updateTask: async (_, { id, ...updates }, { user }) => {
       if (!user) throw new Error("Not authenticated");
       const task = await Task.findOneAndUpdate(
-        { _id: id, createdBy: user.id },
+        { _id: id },
         updates,
         { new: true }
       );
@@ -119,7 +119,7 @@ const resolvers = {
     deleteTask: async (_, { id }, { user }) => {
       if (!user) throw new Error("Not authenticated");
       try {
-        const result = await Task.deleteOne({ _id: id, createdBy: user.id });
+        const result = await Task.deleteOne({ _id: id });
         return result.deletedCount > 0;
       } catch (error) {
         console.error("Error deleting task:", error);
